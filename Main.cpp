@@ -1,6 +1,10 @@
 #include "Game.h"
 #include "MainLoop.h"
+#ifdef _WIN32 // Verifica se e windows para por o WINMAIN como entrypoint
 int WinMain()
+#else 
+int Main()
+#endif
 {
     std::cout << "Starting Game" << std::endl;
     gameWin game;
