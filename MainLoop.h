@@ -89,9 +89,13 @@ public:
                         {
                             playerDebug.start(&playerOne);
                         }
-                        else{
+                        else
+                        {
                             playerDebug.stop();
                         }
+                        break;
+                    case SDLK_F2:
+                        fullScreen(window); 
                         break;
                     }
                 }
@@ -106,9 +110,10 @@ public:
             SDL_RenderPresent(renderer);
             countFPS(window);
         }
-        if(debugLogEnabled){
-                playerDebug.stop();
-            };
+        if (debugLogEnabled)
+        {
+            playerDebug.stop();
+        };
         scene.destroy();
         touch.unload(sound);
         music.unload(sound2);
@@ -128,5 +133,12 @@ public:
             frameCount = 0;
             startTime = currentTime;
         }
+    };
+    void fullScreen(SDL_Window *window)
+    {
+        Uint32 FullscreenFlag = SDL_WINDOW_FULLSCREEN;
+        bool IsFullscreen = SDL_GetWindowFlags(window) & FullscreenFlag;
+        SDL_SetWindowFullscreen(window, IsFullscreen ? 0 : FullscreenFlag);
+        SDL_ShowCursor(IsFullscreen);
     };
 };
