@@ -7,7 +7,7 @@ endif
 all:
 	make compile
 compile:
-	g++ Main.cpp -o $(EXECUTABLE) -lSDL2 -lSDL2_mixer -lSDL2_image
+	 g++ Main.cpp -o $(EXECUTABLE) -lSDL2 -lSDL2_mixer -lSDL2_image
 clean:
 	rm -f $(EXECUTABLE)
 run:
