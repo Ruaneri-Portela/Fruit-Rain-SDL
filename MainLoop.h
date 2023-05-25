@@ -34,7 +34,7 @@ public:
         std::cout << "@@ Main game loop getted" << std::endl;
         // Audio
         mainTrack.init();
-        Mix_Chunk *sound = touch.load("assets/audio/touch.wav");
+        Mix_Chunk *sound = touch.load("assets/audio/audio2.wav");
         Mix_Chunk *sound2 = music.load("assets/audio/audio.wav");
         gameFruits.sound = touch.load("assets/audio/audio6.wav");
         gameFruits.sound2 = touch.load("assets/audio/audio7.wav");
