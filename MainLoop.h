@@ -1,9 +1,8 @@
 #include <sstream>
-#include "Player.h"
-#include "Entity.h"
 #include "Audio.h"
 #include "Scenario.h"
-#include "Time.h"
+#include "Fruit.h"
+#include "Debug.h"
 class mainLoop
 {
 private:
@@ -17,9 +16,10 @@ private:
     std::string muted = "";
     int speedMove = 20;
     bool debugLogEnabled = false;
-    TimeObserver obeserver;
     int currentTime;
     int elapsedTime;
+    DebugLogger playerDebug;
+    Fruit gameFruits;
 public:
     int gameLoop(SDL_Window *window, SDL_Renderer *renderer)
     {
@@ -28,15 +28,19 @@ public:
         mainTrack.init();
         Mix_Chunk *sound = touch.load("assets/audio/touch.wav");
         Mix_Chunk *sound2 = music.load("assets/audio/audio.wav");
+        gameFruits.sound = touch.load("assets/audio/audio6.wav");
+        gameFruits.sound2 = touch.load("assets/audio/audio7.wav");
+        gameFruits.mainTrack = &mainTrack;
         // Bakcgroud
         scene.loadBackgroud(renderer, "assets/texture/bitmap.png");
         // Triggers
         startTime = SDL_GetTicks();
         bool running = true;
         SDL_Event event;
-        obeserver.start();
-        obeserver.tick = &elapsedTime;
         playerOne.tick = &elapsedTime;
+        gameFruits.init(renderer);
+        gameFruits.tick = &elapsedTime;
+        gameFruits.onePlayer = &playerOne;
         while (running)
         {
             currentTime = SDL_GetTicks();
@@ -67,6 +71,9 @@ public:
                         playerOne.move(speedMove, 0);
                         mainTrack.play(sound, -1);
                         break;
+                    case SDLK_ESCAPE:
+                        running = false;
+                        break;
                     case SDLK_m:
                         mainTrack.playable = !mainTrack.playable;
                         if (mainTrack.playable)
@@ -81,7 +88,19 @@ public:
                         mainTrack.play(sound, -1);
                         break;
                     case SDLK_F1:
-                        debugLogEnabled =!debugLogEnabled;
+                        std::cout << "\033[2J"; // Limpar o terminal
+                        debugLogEnabled = !debugLogEnabled;
+                        if (debugLogEnabled)
+                        {
+                            playerDebug.start(&playerOne);
+                        }
+                        else
+                        {
+                            playerDebug.stop();
+                        }
+                        break;
+                    case SDLK_F2:
+                        fullScreen(window); 
                         break;
                     }
                 }
@@ -89,15 +108,19 @@ public:
                 {
                     mainTrack.play(sound2, 0);
                 }
-                debugLog();
-            }
+            }           
             SDL_RenderClear(renderer);
             scene.draw(renderer);
+            gameFruits.update();
             playerOne.draw(renderer);
             SDL_RenderPresent(renderer);
             countFPS(window);
         }
-        obeserver.stop();
+        gameFruits.destroy();
+        if (debugLogEnabled)
+        {
+            playerDebug.stop();
+        };
         scene.destroy();
         touch.unload(sound);
         music.unload(sound2);
@@ -111,18 +134,18 @@ public:
         {
             float fps = frameCount / (elapsedTime / 1000.0f);
             std::stringstream title;
-            title << "Game Windows FPS: " << fps << muted << std::endl;
+            title << "Fruit Rain SDL Edition FPS: " << fps << muted << std::endl;
             std::string windowTitle = title.str();
             SDL_SetWindowTitle(window, windowTitle.c_str());
             frameCount = 0;
             startTime = currentTime;
         }
     };
-    void debugLog(){
-        if(debugLogEnabled){
-        std::cout << "\033[2J"; // Limpar o terminal
-        std::cout << "\033[H" << "Degub Logger\n==========" << std::endl; //Tabular para ponto 1:1
-        std::cout << "Player Position: X=>" << playerOne.x << " Y=>" << playerOne.y << std::endl;
-        }
+    void fullScreen(SDL_Window *window)
+    {
+        Uint32 FullscreenFlag = SDL_WINDOW_FULLSCREEN;
+        bool IsFullscreen = SDL_GetWindowFlags(window) & FullscreenFlag;
+        SDL_SetWindowFullscreen(window, IsFullscreen ? 0 : FullscreenFlag);
+        SDL_ShowCursor(IsFullscreen);
     };
 };
