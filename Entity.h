@@ -3,20 +3,20 @@
 #include "MathUtils.h"
 class Entity
 {
-
 public:
-    int x = randomRange(0,1000), y = 0;
-    int speedX = 0, speedY = 0;
-    int** time;
+    MoveDeltaTime xMove;
+    MoveDeltaTime yMove;
+    int x = randomRange(0, 1000), y = 0;
+    float speedX = 0, speedY = 0;
     SDL_Rect square = {x, y, 20, 20};
     int draw(SDL_Renderer *renderer)
     {
-        if(**time >= 1000){
-            moveOverSpeed();
-        };
+        moveOverSpeed();
         SDL_Rect square = {x, y, 20, 20};
         SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
         SDL_RenderFillRect(renderer, &square);
+        xMove.speed = speedX;
+        yMove.speed = speedY;
         return 0;
     };
     void move(int addX, int addY)
@@ -24,14 +24,13 @@ public:
         x = x + addX;
         y = y + addY;
     }
-    void speedAdd(int X, int Y)
+    void speedAdd(float X, float Y)
     {
         speedX = speedX + X;
         speedY = speedY + Y;
     };
     void moveOverSpeed()
     {
-        move(speedX, speedY);
+        move(xMove.move(), yMove.move());
     };
-    
 };

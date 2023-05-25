@@ -12,7 +12,8 @@
                 "${fileDirname}\\src\\${fileBasenameNoExtension}.exe",
                 "-lSDL2",
                 "-lSDL2_mixer",
-                "-lSDL2_image"
+                "-lSDL2_image",
+                "-lSDL2_ttf"
             ],
             "options": {
                 "cwd": "${fileDirname}"

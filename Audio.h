@@ -5,6 +5,7 @@ class AudioDevice
 {
 public:
     bool playable = true;
+    FILE **file;
     void init()
     {
         std::cout << "&& Starting audio engine" << std::endl;

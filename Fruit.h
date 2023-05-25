@@ -13,13 +13,15 @@ public:
     Mix_Chunk *sound;
     Mix_Chunk *sound2;
     AudioDevice *mainTrack;
+    int returnState;
     void init(SDL_Renderer *rd)
     {
         renderer = rd;
         triggered = true;
     };
-    void update()
+    int update()
     {
+        returnState = 0;
         if (triggered)
         {
             if (entity != NULL)
@@ -29,20 +31,22 @@ public:
             else
             {
                 entity = new Entity();
-                entity->speedAdd(0, 10);
-                entity->time = &tick;
+                entity->speedAdd(0, 6.5);
             };
             if (entity->y > 510)
             {
                 mainTrack->play(sound2,-1);
+                returnState = 2;
                 entity = NULL;
             }
             else if (distance(onePlayer->x, onePlayer->y, entity->x, entity->y) < diff)
             {
                 mainTrack->play(sound,-1);
+                returnState = 1;
                 entity = NULL;
             };
         };
+        return returnState;
     };
     void destroy()
     {

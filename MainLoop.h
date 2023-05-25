@@ -3,6 +3,8 @@
 #include "Scenario.h"
 #include "Fruit.h"
 #include "Debug.h"
+#include "TextDraw.h"
+
 class mainLoop
 {
 private:
@@ -20,6 +22,12 @@ private:
     int elapsedTime;
     DebugLogger playerDebug;
     Fruit gameFruits;
+    SDL_Texture *texture;
+    SDL_Texture *texture2;
+    SDL_Texture *texture3;
+    bool interpolation = false;
+    TextTexture score;
+    int scoreGame=0;
 public:
     int gameLoop(SDL_Window *window, SDL_Renderer *renderer)
     {
@@ -33,6 +41,7 @@ public:
         gameFruits.mainTrack = &mainTrack;
         // Bakcgroud
         scene.loadBackgroud(renderer, "assets/texture/bitmap.png");
+        char filename[] = "assets/ttf/RampartOne-Regular.ttf";
         // Triggers
         startTime = SDL_GetTicks();
         bool running = true;
@@ -41,6 +50,9 @@ public:
         gameFruits.init(renderer);
         gameFruits.tick = &elapsedTime;
         gameFruits.onePlayer = &playerOne;
+        char text[10] = "0";
+        score.load(filename);
+        score.render(renderer, 0, 0, text);
         while (running)
         {
             currentTime = SDL_GetTicks();
@@ -100,7 +112,7 @@ public:
                         }
                         break;
                     case SDLK_F2:
-                        fullScreen(window); 
+                        fullScreen(window);
                         break;
                     }
                 }
@@ -108,11 +120,24 @@ public:
                 {
                     mainTrack.play(sound2, 0);
                 }
-            }           
+            }
             SDL_RenderClear(renderer);
             scene.draw(renderer);
-            gameFruits.update();
+            switch (gameFruits.update())
+            {
+            case 1:
+                scoreGame = scoreGame+1;
+                sprintf(text, "%d", scoreGame);
+                score.render(renderer, 0, 0, text);
+                std::cout << scoreGame << "Pt" << std::endl;
+                
+                break;
+            case 2:
+                std::cout << "-1Hp" << std::endl;
+                break;
+            }
             playerOne.draw(renderer);
+            score.lazyRender(renderer);
             SDL_RenderPresent(renderer);
             countFPS(window);
         }
