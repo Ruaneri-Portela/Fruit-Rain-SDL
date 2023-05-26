@@ -34,7 +34,7 @@ int Main()
     gameWin game;
     mainLoop masterBehaviour;
     int returnReset = false;
-    if (!game.OpenGame())
+    if (!game.OpenGame(NULL))
     {
         std::cout << "Windows system over SDL started" << std::endl;
         SetSDLIcon(game.window);
