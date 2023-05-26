@@ -9,17 +9,16 @@ public:
     SDL_Surface *textSurface;
     SDL_Texture *textTexture;
     SDL_Rect destRect;
-    void load(const char *filename)
+    void load(std::string file)
     {
-        std::string file = "assets/ttf/RampartOne-Regular.ttf";
         font = TTF_OpenFont(file.c_str(), 90);
     }
     void render(SDL_Renderer *renderer, int x, int y, const char *text)
     {
-        color = {0, 0, 0};
-        textSurface =TTF_RenderText_Solid(font,text, color);
+        textSurface = TTF_RenderText_Solid(font, text, color);
         textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-        destRect.x = x;  
+        SDL_FreeSurface(textSurface);
+        destRect.x = x;
         destRect.y = y;
         destRect.w = 50;
         destRect.h = 50;
@@ -27,5 +26,9 @@ public:
     void lazyRender(SDL_Renderer *renderer)
     {
         SDL_RenderCopy(renderer, textTexture, NULL, &destRect);
+    }
+    void freeTexture()
+    {
+        SDL_DestroyTexture(textTexture);
     }
 };

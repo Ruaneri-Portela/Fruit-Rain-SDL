@@ -3,9 +3,11 @@
 #include "MathUtils.h"
 class Entity
 {
-public:
+private:
     MoveDeltaTime xMove;
     MoveDeltaTime yMove;
+
+public:
     int x = randomRange(0, 1000), y = 0;
     float speedX = 0, speedY = 0;
     SDL_Rect square = {x, y, 20, 20};

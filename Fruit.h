@@ -31,18 +31,20 @@ public:
             else
             {
                 entity = new Entity();
-                entity->speedAdd(0, 6.5);
+                entity->speedAdd(0, 10);
             };
             if (entity->y > 510)
             {
                 mainTrack->play(sound2,-1);
                 returnState = 2;
+                delete entity;
                 entity = NULL;
             }
             else if (distance(onePlayer->x, onePlayer->y, entity->x, entity->y) < diff)
             {
                 mainTrack->play(sound,-1);
                 returnState = 1;
+                delete entity;
                 entity = NULL;
             };
         };
@@ -51,6 +53,8 @@ public:
     void destroy()
     {
         triggered = false;
+        delete sound;
+        delete sound2;
         delete entity;
     };
 };

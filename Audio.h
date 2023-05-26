@@ -5,25 +5,12 @@ class AudioDevice
 {
 public:
     bool playable = true;
-    FILE **file;
-    void init()
-    {
-        std::cout << "&& Starting audio engine" << std::endl;
-        Mix_Init(MIX_INIT_MP3);
-        Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-    };
     void play(Mix_Chunk *sound, int channelNumber)
     {
         if (playable)
         {
             Mix_PlayChannel(channelNumber, sound, 0);
         };
-    };
-    void end()
-    {
-        Mix_CloseAudio();
-        Mix_Quit();
-        std::cout << "&& Ending audio engine" << std::endl;
     };
     bool isPlaying(int channelNumber)
     {
@@ -34,7 +21,6 @@ class AudioData
 {
 private:
     Mix_Chunk *sound = NULL;
-
 public:
     Mix_Chunk *load(const char *filename)
     {

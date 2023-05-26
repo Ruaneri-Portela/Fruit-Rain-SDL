@@ -4,10 +4,10 @@
 
 int randomRange(int min, int max)
 {
-    std::random_device rd;                                     // Obtém um dispositivo de geração de números aleatórios
-    std::mt19937 gen(rd());                                    // Inicializa o gerador com o valor do dispositivo
-    std::uniform_int_distribution<int> distribution(min, max); // Define a distribuição
-    return distribution(gen);                                  // Gera um número aleatório dentro do intervalo e o retorna
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> distribution(min, max);
+    return distribution(gen);
 }
 double distance(double x1, double y1, double x2, double y2)
 {
@@ -38,7 +38,8 @@ public:
                 if (mov >= 1.0f)
                 {
                     callback = (int)mov;
-                    mov = mov - 1.0f;
+                    //mov = mov - 1.0f;
+                    mov = 0;
                     return callback;
                 }
                 else

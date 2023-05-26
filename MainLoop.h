@@ -3,56 +3,45 @@
 #include "Scenario.h"
 #include "Fruit.h"
 #include "Debug.h"
-#include "TextDraw.h"
 
 class mainLoop
 {
 private:
     int frameCount = 0;
+    int currentTime;
+    int elapsedTime;
     int startTime = 0;
+    int speedMove = 20;
+    bool running = true;
+    bool debugLogEnabled = false;
     AudioDevice mainTrack;
     AudioData touch;
     AudioData music;
     BackgroudImage scene;
     Player playerOne;
-    std::string muted = "";
-    int speedMove = 20;
-    bool debugLogEnabled = false;
-    int currentTime;
-    int elapsedTime;
     DebugLogger playerDebug;
     Fruit gameFruits;
-    SDL_Texture *texture;
-    SDL_Texture *texture2;
-    SDL_Texture *texture3;
-    bool interpolation = false;
-    TextTexture score;
-    int scoreGame=0;
+    std::string muted = "";
+    std::string spritePlayer = "assets/image/player.png";
+
 public:
     int gameLoop(SDL_Window *window, SDL_Renderer *renderer)
     {
-        std::cout << "@@ Main game loop getted" << std::endl;
-        // Audio
-        mainTrack.init();
+        std::cout << "Main game loop getted" << std::endl;
         Mix_Chunk *sound = touch.load("assets/audio/audio2.wav");
         Mix_Chunk *sound2 = music.load("assets/audio/audio.wav");
         gameFruits.sound = touch.load("assets/audio/audio6.wav");
         gameFruits.sound2 = touch.load("assets/audio/audio7.wav");
         gameFruits.mainTrack = &mainTrack;
-        // Bakcgroud
-        scene.loadBackgroud(renderer, "assets/texture/bitmap.png");
-        char filename[] = "assets/ttf/RampartOne-Regular.ttf";
-        // Triggers
+        scene.loadBackgroud(renderer, "assets/texture/bitmap.png","assets/ttf/RampartOne-Regular.ttf");
+        playerOne.setSprite(renderer, spritePlayer);
         startTime = SDL_GetTicks();
-        bool running = true;
         SDL_Event event;
         playerOne.tick = &elapsedTime;
         gameFruits.init(renderer);
         gameFruits.tick = &elapsedTime;
         gameFruits.onePlayer = &playerOne;
-        char text[10] = "0";
-        score.load(filename);
-        score.render(renderer, 0, 0, text);
+        SDL_ShowWindow(window);
         while (running)
         {
             currentTime = SDL_GetTicks();
@@ -123,33 +112,19 @@ public:
             }
             SDL_RenderClear(renderer);
             scene.draw(renderer);
-            switch (gameFruits.update())
-            {
-            case 1:
-                scoreGame = scoreGame+1;
-                sprintf(text, "%d", scoreGame);
-                score.render(renderer, 0, 0, text);
-                std::cout << scoreGame << "Pt" << std::endl;
-                
-                break;
-            case 2:
-                std::cout << "-1Hp" << std::endl;
-                break;
-            }
+            scene.scoreUpdate(renderer, gameFruits.update());
             playerOne.draw(renderer);
-            score.lazyRender(renderer);
             SDL_RenderPresent(renderer);
             countFPS(window);
         }
-        gameFruits.destroy();
         if (debugLogEnabled)
         {
             playerDebug.stop();
         };
+        gameFruits.destroy();
         scene.destroy();
         touch.unload(sound);
         music.unload(sound2);
-        mainTrack.end();
         return 0;
     };
     void countFPS(SDL_Window *window)

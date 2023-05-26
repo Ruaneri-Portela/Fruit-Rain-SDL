@@ -7,7 +7,7 @@ endif
 all:
 	make compile
 compile:
-	g++ Main.cpp -o $(EXECUTABLE) -lSDL2 -lSDL2_mixer -lSDL2_image -lSDL2_ttf
+	g++ Main.cpp -o $(EXECUTABLE) -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image
 clean:
 	rm -fr src/*
 run:
