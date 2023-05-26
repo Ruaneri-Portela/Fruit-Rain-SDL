@@ -1,5 +1,4 @@
 #include <random>
-#include <iostream>
 #include <cmath>
 // Utilitarios de matematica usados nos codigos
 int randomRange(int min, int max)

@@ -1,6 +1,5 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <iostream>
 #include "TextDraw.h"
 // Rendenizador dos itens de fundo e GUI
 class BackgroudImage
