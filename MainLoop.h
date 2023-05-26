@@ -33,19 +33,20 @@ public:
         gameFruits.sound = touch.load("assets/audio/audio6.wav");
         gameFruits.sound2 = touch.load("assets/audio/audio7.wav");
         gameFruits.mainTrack = &mainTrack;
-        // Relativos ao desenho de itens da interface
-        scene.loadBackgroud(renderer, "assets/texture/bitmap.png", "assets/ttf/RampartOne-Regular.ttf");
-        playerOne.setSprite(renderer, spritePlayer);
-        gameFruits.init(renderer);
         // Relativos ao Delta Time
         startTime = SDL_GetTicks();
         playerOne.tick = &elapsedTime;
         gameFruits.tick = &elapsedTime;
         gameFruits.onePlayer = &playerOne;
+        // Relativos ao desenho de itens da interface
+        scene.loadBackgroud(renderer, "assets/texture/bitmap.png", "assets/ttf/RampartOne-Regular.ttf");
+        playerOne.setSprite(renderer, spritePlayer);
+        gameFruits.init(renderer);
         SDL_ShowWindow(window);
         SDL_Event event;
         while (running)
         {
+            // Isso aqui corrige o tempo para o Delta time
             currentTime = SDL_GetTicks();
             elapsedTime = currentTime - startTime;
             // Ações do jogo (Movimento, som, vida e etc...)

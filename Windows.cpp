@@ -6,6 +6,7 @@
 #include <uxtheme.h>
 // Isso e uma bagunça, experimentos usando o window.h
 HWND button;
+//Isso abaixo e como se posse uma thead separada os itens em WindowProc rodam independente o WinMain
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     SDL_Window *sdlWindow;
