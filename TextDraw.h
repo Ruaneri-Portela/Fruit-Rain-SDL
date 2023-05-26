@@ -1,6 +1,6 @@
 #include <SDL2/SDL_ttf.h>
 #include <string>
-
+// Carregador de textos na tela
 class TextTexture
 {
 public:

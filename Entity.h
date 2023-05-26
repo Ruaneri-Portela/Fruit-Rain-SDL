@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include "MathUtils.h"
+// Aqui tem a instancia de objetos não jogaveis, apilidados de entidades
 class Entity
 {
 private:

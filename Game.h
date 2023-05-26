@@ -2,6 +2,7 @@
 #include <iostream>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
+// Carregador do jogo, inicia e destroi itens do SDL
 class gameWin
 {
 public:

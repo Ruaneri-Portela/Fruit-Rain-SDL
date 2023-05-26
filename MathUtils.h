@@ -1,7 +1,7 @@
 #include <random>
 #include <iostream>
 #include <cmath>
-
+// Utilitarios de matematica usados nos codigos
 int randomRange(int min, int max)
 {
     std::random_device rd;
@@ -38,7 +38,7 @@ public:
                 if (mov >= 1.0f)
                 {
                     callback = (int)mov;
-                    //mov = mov - 1.0f;
+                    // mov = mov - 1.0f;
                     mov = 0;
                     return callback;
                 }

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <SDL2/SDL.h>
+// Area de debug, sem muitos comentarios
 class DebugLogger
 {
 private:

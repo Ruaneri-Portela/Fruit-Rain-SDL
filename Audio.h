@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 #include <iostream>
+// Carregador do dispositivo de audio (Criador do Canal no mixer do sistema) e o tocador de audio
 class AudioDevice
 {
 public:
@@ -17,10 +18,12 @@ public:
         return Mix_Playing(channelNumber) != 0;
     };
 };
+// Carregador do audio na memoria
 class AudioData
 {
 private:
     Mix_Chunk *sound = NULL;
+
 public:
     Mix_Chunk *load(const char *filename)
     {

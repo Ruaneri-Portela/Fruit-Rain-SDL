@@ -53,6 +53,8 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "map": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "fstream": "cpp",
+        "icon.c": "cpp"
     }
 }

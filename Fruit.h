@@ -1,5 +1,6 @@
 #include "Entity.h"
 #include "Player.h"
+// Aqui instanciamos as frutas (entidades)
 class Fruit
 {
 private:
@@ -7,6 +8,7 @@ private:
     Entity *entity = NULL;
     bool triggered = false;
     float diff = 20;
+
 public:
     int *tick;
     Player *onePlayer;
@@ -35,14 +37,14 @@ public:
             };
             if (entity->y > 510)
             {
-                mainTrack->play(sound2,-1);
+                mainTrack->play(sound2, -1);
                 returnState = 2;
                 delete entity;
                 entity = NULL;
             }
             else if (distance(onePlayer->x, onePlayer->y, entity->x, entity->y) < diff)
             {
-                mainTrack->play(sound,-1);
+                mainTrack->play(sound, -1);
                 returnState = 1;
                 delete entity;
                 entity = NULL;

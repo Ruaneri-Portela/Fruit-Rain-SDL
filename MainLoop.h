@@ -1,9 +1,9 @@
 #include <sstream>
-#include "Audio.h"
 #include "Scenario.h"
+#include "Audio.h"
 #include "Fruit.h"
 #include "Debug.h"
-
+// Esse e o loop principal, pode parecer uma bagunça, mais em resumo as ações são todas invocadas por aqui
 class mainLoop
 {
 private:
@@ -27,25 +27,28 @@ private:
 public:
     int gameLoop(SDL_Window *window, SDL_Renderer *renderer)
     {
-        std::cout << "Main game loop getted" << std::endl;
+        // Relativos ao som
         Mix_Chunk *sound = touch.load("assets/audio/audio2.wav");
         Mix_Chunk *sound2 = music.load("assets/audio/audio.wav");
         gameFruits.sound = touch.load("assets/audio/audio6.wav");
         gameFruits.sound2 = touch.load("assets/audio/audio7.wav");
         gameFruits.mainTrack = &mainTrack;
-        scene.loadBackgroud(renderer, "assets/texture/bitmap.png","assets/ttf/RampartOne-Regular.ttf");
+        // Relativos ao desenho de itens da interface
+        scene.loadBackgroud(renderer, "assets/texture/bitmap.png", "assets/ttf/RampartOne-Regular.ttf");
         playerOne.setSprite(renderer, spritePlayer);
-        startTime = SDL_GetTicks();
-        SDL_Event event;
-        playerOne.tick = &elapsedTime;
         gameFruits.init(renderer);
+        // Relativos ao Delta Time
+        startTime = SDL_GetTicks();
+        playerOne.tick = &elapsedTime;
         gameFruits.tick = &elapsedTime;
         gameFruits.onePlayer = &playerOne;
         SDL_ShowWindow(window);
+        SDL_Event event;
         while (running)
         {
             currentTime = SDL_GetTicks();
             elapsedTime = currentTime - startTime;
+            // Ações do jogo (Movimento, som, vida e etc...)
             while (SDL_PollEvent(&event))
             {
                 if (event.type == SDL_QUIT)
@@ -110,6 +113,7 @@ public:
                     mainTrack.play(sound2, 0);
                 }
             }
+            // Redraw da janela
             SDL_RenderClear(renderer);
             scene.draw(renderer);
             scene.scoreUpdate(renderer, gameFruits.update());
@@ -117,6 +121,7 @@ public:
             SDL_RenderPresent(renderer);
             countFPS(window);
         }
+        // Ponto de descarga
         if (debugLogEnabled)
         {
             playerDebug.stop();
@@ -127,6 +132,7 @@ public:
         music.unload(sound2);
         return 0;
     };
+    // Contador de FPS
     void countFPS(SDL_Window *window)
     {
         frameCount++;
@@ -141,6 +147,7 @@ public:
             startTime = currentTime;
         }
     };
+    // Tela inteira
     void fullScreen(SDL_Window *window)
     {
         Uint32 FullscreenFlag = SDL_WINDOW_FULLSCREEN;

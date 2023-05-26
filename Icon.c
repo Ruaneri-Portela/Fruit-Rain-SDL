@@ -1,5 +1,5 @@
 /* GIMP RGBA C-Source image dump (Icon.c) */
-
+// Icone , gerado automaticamente
 static const struct
 {
   unsigned int width;
