@@ -29,7 +29,7 @@ public:
     {
         dataThead.player = playerPointer;
         dataThead.trigger = true;
-        thread = SDL_CreateThread(action, "MinhaThread", &dataThead);
+        thread = SDL_CreateThread(action, "DebugThead", &dataThead);
     }
     void stop()
     {

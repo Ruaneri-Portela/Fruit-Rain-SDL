@@ -8,10 +8,16 @@ class mainLoop
 {
 private:
     int frameCount = 0;
+    int fpsC = 0;
     int currentTime;
     int elapsedTime;
     int startTime = 0;
     int speedMove = 20;
+    int mouseX, mouseY;
+    int count = 0;
+    int lockFPS = 0;
+    bool lokedFPS = false;
+    bool mouseEnabled = false;
     bool running = true;
     bool debugLogEnabled = false;
     AudioDevice mainTrack;
@@ -22,7 +28,9 @@ private:
     DebugLogger playerDebug;
     Fruit gameFruits;
     std::string muted = "";
+    std::string lokedFrameRate = "";
     std::string spritePlayer = "assets/texture/player.png";
+    std::stringstream title;
 
 public:
     int gameLoop(SDL_Window *window, SDL_Renderer *renderer)
@@ -41,17 +49,23 @@ public:
         // Relativos ao desenho de itens da interface
         scene.loadBackgroud(renderer, "assets/texture/bitmap.png", "assets/ttf/CadetTest-Black.otf");
         playerOne.loadSprite(renderer, spritePlayer);
+        playerOne.mouseEnabled = &mouseEnabled;
+        playerOne.speedY = 20;
         gameFruits.init(renderer);
         SDL_ShowWindow(window);
         SDL_Event event;
         while (running)
         {
+            title.str(""); // Reinicia o conteúdo como uma string vazia
+            title.clear();
+            title << "Fruit Rain SDL Edition Version 0.1 MinGW";
             // Isso aqui corrige o tempo para o Delta time
             currentTime = SDL_GetTicks();
             elapsedTime = currentTime - startTime;
             // Ações do jogo (Movimento, som, vida e etc...)
             while (SDL_PollEvent(&event))
             {
+                SDL_GetMouseState(&mouseX, &mouseY);
                 if (event.type == SDL_QUIT)
                 {
                     running = false;
@@ -107,20 +121,52 @@ public:
                     case SDLK_F2:
                         fullScreen(window);
                         break;
+                    case SDLK_F3:
+                        mouseEnabled = !mouseEnabled;
+                        break;
+
+                    case SDLK_F4:
+                        lockFPS = 20;
+                        lokedFPS = !lokedFPS;
+                        lokedFrameRate = " (FPS Locked)";
+                        if (lokedFPS == false)
+                        {
+                            lockFPS = 0;
+                            lokedFrameRate = "";
+                        }
+                        break;
                     }
                 }
+                else if (event.type == SDL_KEYUP)
+                {
+                    switch (event.key.keysym.sym)
+                    {
+                    }
+                }
+                if (mouseEnabled)
+                {
+                    playerOne.moveToMouse(mouseX, mouseY);
+                };
                 if (!mainTrack.isPlaying(0))
                 {
                     mainTrack.play(sound2, 0);
                 }
             }
             // Redraw da janela
-            SDL_RenderClear(renderer);
-            scene.draw(renderer);
+            if (count > (int)(fpsC / 30))
+            {
+                SDL_RenderClear(renderer);
+                scene.draw(renderer);
+                count = 0;
+            }
+            SDL_Delay(lockFPS);
             scene.scoreUpdate(renderer, gameFruits.update());
             playerOne.draw(renderer);
             SDL_RenderPresent(renderer);
             countFPS(window);
+
+            count++;
+            
         }
         // Ponto de descarga
         if (debugLogEnabled)
@@ -140,8 +186,8 @@ public:
         if (elapsedTime >= 1000)
         {
             float fps = frameCount / (elapsedTime / 1000.0f);
-            std::stringstream title;
-            title << "Fruit Rain SDL Edition FPS: " << fps << muted << std::endl;
+            fpsC = frameCount;
+            title << muted <<lokedFrameRate << " (FPS:"<< fpsC << ")" << std::endl;
             std::string windowTitle = title.str();
             SDL_SetWindowTitle(window, windowTitle.c_str());
             frameCount = 0;

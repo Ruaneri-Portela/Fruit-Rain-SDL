@@ -3,10 +3,9 @@
 #include <windows.h>
 #include "Game.h"
 #include "MainLoop.h"
-#include <uxtheme.h>
 // Isso e uma bagunça, experimentos usando o window.h
 HWND button;
-//Isso abaixo e como se posse uma thead separada os itens em WindowProc rodam independente o WinMain
+// Isso abaixo e como se posse uma thead separada os itens em WindowProc rodam independente o WinMain
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     SDL_Window *sdlWindow;
@@ -32,15 +31,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CLOSE:
         DestroyWindow(hwnd);
         break;
-
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
-
     default:
         return DefWindowProc(hwnd, uMsg, wParam, lParam);
     }
-
     return 0;
 }
 
@@ -55,7 +51,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
     wc.lpszClassName = CLASS_NAME;
     RegisterClass(&wc);
-
     // Criar a janela
     HWND hwnd = CreateWindow(CLASS_NAME,
                              WINDOW_NAME,
@@ -68,7 +63,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
                              NULL,
                              hInstance,
                              NULL);
-    SetWindowTheme(hwnd, L"Explorer", NULL);
     HWND label = CreateWindowEx(
         0,                     // Estilo estendido
         L"STATIC",             // Classe de controle
@@ -95,7 +89,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     );
     // Exibir a janela
     ShowWindow(hwnd, nCmdShow);
-
     // Loop de mensagens
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0))
@@ -103,6 +96,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-
     return (int)msg.wParam;
 }

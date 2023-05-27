@@ -15,8 +15,19 @@ public:
             }
             else
             {
-                entity = new Entity();  
-                sprite = setSprite(renderer,"assets/texture/fruit1.png");
+                entity = new Entity();
+                switch (randomRange(0,2))
+                {
+                case 0:
+                    sprite=setSprite(renderer,"assets/texture/fruit1.png");
+                    break;
+                case 1:
+                    sprite=setSprite(renderer,"assets/texture/fruit2.png");
+                    break;
+                case 2:
+                    sprite=setSprite(renderer,"assets/texture/fruit3.png");
+                    break;
+                }
                 entity->speedAdd(0, 10);
             };
             if (entity->y > 510)

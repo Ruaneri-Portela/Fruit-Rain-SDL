@@ -20,7 +20,7 @@ public:
         SDL_FreeSurface(textSurface);
         destRect.x = x;
         destRect.y = y;
-        destRect.w = 35*strlen(text);
+        destRect.w = 32*strlen(text);
         destRect.h = 50;
     }
     void lazyRender(SDL_Renderer *renderer)

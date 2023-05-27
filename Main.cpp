@@ -36,7 +36,7 @@ int Main()
     {
         setIcon(game.window);
         game.OpenRender();
-        masterBehaviour.gameLoop(game.window, game.renderer);
+        printf("Exit with code ->%d",masterBehaviour.gameLoop(game.window, game.renderer));
         game.CloseGame();
     }
     return 0;
