@@ -22,7 +22,7 @@ private:
     DebugLogger playerDebug;
     Fruit gameFruits;
     std::string muted = "";
-    std::string spritePlayer = "assets/image/player.png";
+    std::string spritePlayer = "assets/texture/player.png";
 
 public:
     int gameLoop(SDL_Window *window, SDL_Renderer *renderer)
@@ -39,8 +39,8 @@ public:
         gameFruits.tick = &elapsedTime;
         gameFruits.onePlayer = &playerOne;
         // Relativos ao desenho de itens da interface
-        scene.loadBackgroud(renderer, "assets/texture/bitmap.png", "assets/ttf/RampartOne-Regular.ttf");
-        playerOne.setSprite(renderer, spritePlayer);
+        scene.loadBackgroud(renderer, "assets/texture/bitmap.png", "assets/ttf/CadetTest-Black.otf");
+        playerOne.loadSprite(renderer, spritePlayer);
         gameFruits.init(renderer);
         SDL_ShowWindow(window);
         SDL_Event event;

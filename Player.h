@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <string>
+#include "Utils.h"
 // Instanciamento do objeto jogavel
 class Player
 {
@@ -12,10 +13,9 @@ public:
     SDL_Rect square = {x, y, 41, 74};
     SDL_Surface *imageSurface;
     SDL_Texture *texture;
-    void setSprite(SDL_Renderer *renderer, std::string location)
+    void loadSprite(SDL_Renderer *renderer, std::string location)
     {
-        imageSurface = IMG_Load("assets/texture/player.png");
-        texture = SDL_CreateTextureFromSurface(renderer, imageSurface);
+        texture = setSprite(renderer,location.c_str());
     };
     int draw(SDL_Renderer *renderer)
     {

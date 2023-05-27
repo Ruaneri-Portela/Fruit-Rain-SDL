@@ -16,7 +16,7 @@ public:
         texture = SDL_CreateTextureFromSurface(renderer, surface);
         SDL_FreeSurface(surface);
         score.load(file);
-        score.render(renderer, 0, 0, text.c_str());
+        score.render(renderer, 5, 5, text.c_str());
     };
     void draw(SDL_Renderer *renderer)
     {
@@ -30,7 +30,7 @@ public:
             scoreGame = scoreGame + 1;
             score.freeTexture();
             text = std::to_string(scoreGame);
-            score.render(renderer, 0, 0, text.c_str());
+            score.render(renderer, 5, 5, text.c_str());
             break;
         case 2:
             break;

@@ -1,48 +1,38 @@
 #include <iostream>
-#include <thread>
 #include <SDL2/SDL.h>
-// Area de debug, sem muitos comentarios
+
+struct ThreadData
+{
+    Player* player;
+    bool trigger;
+};
+
 class DebugLogger
 {
 private:
-    Player *player;
-    Entity *entity;
-    std::thread debuggerA;
-    bool trigger;
-    void action()
+    static int action(void* data)
     {
-        while (trigger)
+        ThreadData* threadData = static_cast<ThreadData*>(data);
+        while (threadData->trigger)
         {
-            std::cout << "\033[H"
-                      << "Degub Logger\n==========" << std::endl; // Tabular para ponto 1:1
-            std::cout << "Player Position: X=>" << player->square.x << " Y=>" << player->square.y << std::endl;
+            std::cout << "\033[H"<< "Debug Logger\n==============================" << std::endl;
+            std::cout << "Player Position: X=>" << threadData->player->square.x << " Y=>" << threadData->player->square.y << std::endl;
+            std::cout << "==============================" << std::endl;
         }
-    };
-    void action2()
-    {
-        while (trigger)
-        {
-            std::cout << "\033[H"
-                      << "Degub Logger\n==========" << std::endl; // Tabular para ponto 1:1
-            std::cout << "Player Position: X=>" << entity->x << " Y=>" << entity->y << std::endl;
-        }
-    };
+        return 0;
+    }
 
 public:
-    void start(Player *PlayerPointer)
+    SDL_Thread* thread;
+    ThreadData dataThead;
+    void start(Player* playerPointer)
     {
-        trigger = true;
-        debuggerA = std::thread(&DebugLogger::action, this);
-        player = PlayerPointer;
-    };
-    void start2(Entity *entityPointer)
-    {
-        trigger = true;
-        debuggerA = std::thread(&DebugLogger::action2, this);
-        entity = entityPointer;
-    };
+        dataThead.player = playerPointer;
+        dataThead.trigger = true;
+        thread = SDL_CreateThread(action, "MinhaThread", &dataThead);
+    }
     void stop()
     {
-        trigger = false;
+        dataThead.trigger = false;
     }
 };
