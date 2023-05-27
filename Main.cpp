@@ -27,7 +27,7 @@ static void setIcon(SDL_Window *window)
 #ifdef _WIN32
 int WinMain()
 #else
-int Main()
+int main()
 #endif
 {
     gameWin game;
