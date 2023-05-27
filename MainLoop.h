@@ -20,6 +20,7 @@ private:
     bool mouseEnabled = false;
     bool running = true;
     bool debugLogEnabled = false;
+    bool paused = false;
     AudioDevice mainTrack;
     AudioData touch;
     AudioData music;
@@ -31,8 +32,9 @@ private:
     std::string lokedFrameRate = "";
     std::string spritePlayer = "assets/texture/player.png";
     std::string spritePlayerA = "assets/texture/playerA.png";
+    std::string pauseFont = "assets/ttf/RampartOne-Regular.ttf";
     std::stringstream title;
-
+    TextTexture pauseAlert;
 public:
     int gameLoop(SDL_Window *window, SDL_Renderer *renderer)
     {
@@ -49,12 +51,13 @@ public:
         gameFruits.onePlayer = &playerOne;
         // Relativos ao desenho de itens da interface
         scene.loadBackgroud(renderer, "assets/texture/bitmap.png", "assets/ttf/CadetTest-Black.otf");
-        playerOne.loadSprite(renderer, spritePlayer,spritePlayerA);
+        playerOne.loadSprite(renderer, spritePlayer, spritePlayerA);
         playerOne.mouseEnabled = &mouseEnabled;
         playerOne.speedY = 20;
         gameFruits.init(renderer);
         SDL_ShowWindow(window);
         SDL_Event event;
+        pauseAlert.load(pauseFont);
         while (running)
         {
             title.str(""); // Reinicia o conteúdo como uma string vazia
@@ -107,6 +110,9 @@ public:
                         }
                         mainTrack.play(sound, -1);
                         break;
+                    case SDLK_p:
+                        paused =!paused;
+                        break;
                     case SDLK_F1:
                         std::cout << "\033[2J"; // Limpar o terminal
                         debugLogEnabled = !debugLogEnabled;
@@ -152,6 +158,39 @@ public:
                 {
                     mainTrack.play(sound2, 0);
                 }
+                while (paused)
+                {
+                    
+                    Mix_HaltChannel(-1);
+                    Mix_HaltChannel(0);
+                    pauseAlert.render(renderer, 250, 200, 64, 100,"Paused!");
+                    pauseAlert.lazyRender(renderer);
+                    SDL_RenderPresent(renderer);
+                    while (SDL_PollEvent(&event))
+                    {
+                        SDL_SetWindowTitle(window, "Fruit Rain SDL Edition Version 0.1 MinGW Paused");
+                        if (event.type == SDL_QUIT)
+                        {
+                            running = false;
+                            paused = false;
+                        }
+                        else if (event.type == SDL_KEYDOWN)
+                        {
+                            switch (event.key.keysym.sym)
+                            {
+                            case SDLK_p:
+                                paused = false;
+                                break;
+
+                            case SDLK_ESCAPE:
+                                playerOne.move(0, -speedMove);
+                                running = false;
+                                paused = false;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
             // Redraw da janela
             if (count > (int)(fpsC / 30))
@@ -165,9 +204,7 @@ public:
             playerOne.draw(renderer);
             SDL_RenderPresent(renderer);
             countFPS(window);
-
             count++;
-            
         }
         // Ponto de descarga
         if (debugLogEnabled)
@@ -188,7 +225,7 @@ public:
         {
             float fps = frameCount / (elapsedTime / 1000.0f);
             fpsC = frameCount;
-            title << muted <<lokedFrameRate << " (FPS:"<< fpsC << ")" << std::endl;
+            title << muted << lokedFrameRate << " (FPS:" << fpsC << ")" << std::endl;
             std::string windowTitle = title.str();
             SDL_SetWindowTitle(window, windowTitle.c_str());
             frameCount = 0;

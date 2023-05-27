@@ -7,7 +7,7 @@ class Player
 public:
     bool Atacker;
     int speedX = 0, speedY = 0;
-    int x = 500, y = 10,h=41,w=74;
+    int x = 500, y = 10, h = 41, w = 74;
     int health = 4;
     int *tick;
     bool *mouseEnabled;
@@ -43,6 +43,14 @@ public:
         else
         {
             y = 450;
+        };
+        if (x < 0)
+        {
+            x = 1000;
+        }
+        else if (x > 1000)
+        {
+            x = 0;
         };
         MoveY.speed = speedY;
         MoveX.speed = speedX;
