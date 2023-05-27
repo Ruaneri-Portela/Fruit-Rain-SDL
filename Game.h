@@ -5,8 +5,8 @@
 class gameWin
 {
 public:
-    SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
+    SDL_Window *window = NULL;
     int OpenGame(SDL_Window *target)
     {
         SDL_Init(SDL_INIT_EVERYTHING);

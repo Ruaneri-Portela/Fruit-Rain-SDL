@@ -4,23 +4,25 @@
 #include "Fruit.h"
 #include "Debug.h"
 // Esse e o loop principal, pode parecer uma bagunça, mais em resumo as ações são todas invocadas por aqui
-class mainLoop
+class MainLoop
 {
 private:
-    int frameCount = 0;
-    int fpsC = 0;
-    int currentTime;
-    int elapsedTime;
-    int startTime = 0;
+    // Variaveis do jogo
     int speedMove = 20;
-    int mouseX, mouseY;
-    int count = 0;
+    int frameCount = 0;
+    int startTime = 0;
+    int fpsCount = 0;
     int lockFPS = 0;
-    bool lokedFPS = false;
-    bool mouseEnabled = false;
-    bool running = true;
+    int count = 0;
+    int currentTime = 0;
+    int elapsedTime= 0;
+    int mouseX = 0;
+    int mouseY = 0;
     bool debugLogEnabled = false;
+    bool mouseEnabled = false;
+    bool lokedFPS = false;
     bool paused = false;
+    bool running = true;
     AudioDevice mainTrack;
     AudioData touch;
     AudioData music;
@@ -28,13 +30,15 @@ private:
     Player playerOne;
     DebugLogger playerDebug;
     Fruit gameFruits;
-    std::string muted = "";
-    std::string lokedFrameRate = "";
-    std::string spritePlayer = "assets/texture/player.png";
-    std::string spritePlayerA = "assets/texture/playerA.png";
     std::string pauseFont = "assets/ttf/RampartOne-Regular.ttf";
+    std::string spritePlayerA = "assets/texture/playerA.png";
+    std::string spritePlayer = "assets/texture/player.png";
+    std::string lokedFrameRate = "";
+    std::string muted = "";
     std::stringstream title;
     TextTexture pauseAlert;
+    SDL_Event event;
+
 public:
     int gameLoop(SDL_Window *window, SDL_Renderer *renderer)
     {
@@ -53,10 +57,8 @@ public:
         scene.loadBackgroud(renderer, "assets/texture/bitmap.png", "assets/ttf/CadetTest-Black.otf");
         playerOne.loadSprite(renderer, spritePlayer, spritePlayerA);
         playerOne.mouseEnabled = &mouseEnabled;
-        playerOne.speedY = 20;
         gameFruits.init(renderer);
         SDL_ShowWindow(window);
-        SDL_Event event;
         pauseAlert.load(pauseFont);
         while (running)
         {
@@ -111,7 +113,7 @@ public:
                         mainTrack.play(sound, -1);
                         break;
                     case SDLK_p:
-                        paused =!paused;
+                        paused = !paused;
                         break;
                     case SDLK_F1:
                         std::cout << "\033[2J"; // Limpar o terminal
@@ -150,6 +152,7 @@ public:
                     {
                     }
                 }
+                // Switch do mouse controler
                 if (mouseEnabled)
                 {
                     playerOne.moveToMouse(mouseX, mouseY);
@@ -158,12 +161,12 @@ public:
                 {
                     mainTrack.play(sound2, 0);
                 }
+                // Fluxo de Pause
                 while (paused)
                 {
-                    
                     Mix_HaltChannel(-1);
                     Mix_HaltChannel(0);
-                    pauseAlert.render(renderer, 250, 200, 64, 100,"Paused!");
+                    pauseAlert.render(renderer, 250, 200, 64, 100, "Paused!");
                     pauseAlert.lazyRender(renderer);
                     SDL_RenderPresent(renderer);
                     while (SDL_PollEvent(&event))
@@ -193,7 +196,7 @@ public:
                 }
             }
             // Redraw da janela
-            if (count > (int)(fpsC / 30))
+            if (count > (int)(fpsCount / 30))
             {
                 SDL_RenderClear(renderer);
                 scene.draw(renderer);
@@ -220,17 +223,17 @@ public:
     // Contador de FPS
     void countFPS(SDL_Window *window)
     {
-        frameCount++;
         if (elapsedTime >= 1000)
         {
             float fps = frameCount / (elapsedTime / 1000.0f);
-            fpsC = frameCount;
-            title << muted << lokedFrameRate << " (FPS:" << fpsC << ")" << std::endl;
+            fpsCount = frameCount;
+            title << muted << lokedFrameRate << " (FPS:" << fpsCount << ")" << std::endl;
             std::string windowTitle = title.str();
             SDL_SetWindowTitle(window, windowTitle.c_str());
             frameCount = 0;
             startTime = currentTime;
         }
+        frameCount++;
     };
     // Tela inteira
     void fullScreen(SDL_Window *window)

@@ -5,7 +5,6 @@
 class Player
 {
 public:
-    bool Atacker;
     int speedX = 0, speedY = 0;
     int x = 500, y = 10, h = 41, w = 74;
     int health = 4;

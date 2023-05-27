@@ -3,9 +3,9 @@
 class Object
 {
 public:
+    MoveDeltaTime elapsed;
     Entity *entity = NULL;
     SDL_Texture *sprite;
-    MoveDeltaTime elapsed;
     void object(bool *triggered, SDL_Renderer *renderer, AudioDevice *mainTrack, Mix_Chunk *sound, Mix_Chunk *sound2, int *returnState, Player *onePlayer, float *diff)
     {
         if (triggered)

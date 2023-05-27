@@ -31,7 +31,7 @@ int Main()
 #endif
 {
     gameWin game;
-    mainLoop masterBehaviour;
+    MainLoop masterBehaviour;
     if (!game.OpenGame(NULL)) //Verificando se os componentes iniciram com sucesso
     {
         setIcon(game.window);
