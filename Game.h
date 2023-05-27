@@ -1,19 +1,26 @@
 #include <SDL2/SDL.h>
-#include <iostream>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
+// Carregador do jogo, inicia e destroi itens do SDL
 class gameWin
 {
 public:
-    SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
-    int OpenGame()
+    SDL_Window *window = NULL;
+    int OpenGame(SDL_Window *target)
     {
         SDL_Init(SDL_INIT_EVERYTHING);
         Mix_Init(MIX_INIT_MP3);
         Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
         TTF_Init();
-        window = SDL_CreateWindow("Fruit Rain SDL Edition", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1000, 600, SDL_WINDOW_HIDDEN);
+        if (target == NULL)
+        {
+            window = SDL_CreateWindow("Fruit Rain SDL Edition", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1000, 600, SDL_WINDOW_HIDDEN);
+        }
+        else
+        {
+            window = target;
+        };
         return 0;
     }
     int CloseWin()

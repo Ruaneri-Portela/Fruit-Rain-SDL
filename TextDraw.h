@@ -1,6 +1,6 @@
 #include <SDL2/SDL_ttf.h>
 #include <string>
-
+// Carregador de textos na tela
 class TextTexture
 {
 public:
@@ -13,15 +13,15 @@ public:
     {
         font = TTF_OpenFont(file.c_str(), 90);
     }
-    void render(SDL_Renderer *renderer, int x, int y, const char *text)
+    void render(SDL_Renderer *renderer, int x, int y,int w,int h,  const char *text)
     {
-        textSurface = TTF_RenderText_Solid(font, text, color);
+        textSurface = TTF_RenderText_Blended(font, text, color);
         textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
         SDL_FreeSurface(textSurface);
         destRect.x = x;
         destRect.y = y;
-        destRect.w = 50;
-        destRect.h = 50;
+        destRect.w = w*strlen(text);
+        destRect.h = h;
     }
     void lazyRender(SDL_Renderer *renderer)
     {

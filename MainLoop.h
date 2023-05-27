@@ -1,19 +1,28 @@
 #include <sstream>
-#include "Audio.h"
 #include "Scenario.h"
+#include "Audio.h"
 #include "Fruit.h"
 #include "Debug.h"
-
-class mainLoop
+// Esse e o loop principal, pode parecer uma bagunça, mais em resumo as ações são todas invocadas por aqui
+class MainLoop
 {
 private:
-    int frameCount = 0;
-    int currentTime;
-    int elapsedTime;
-    int startTime = 0;
+    // Variaveis do jogo
     int speedMove = 20;
-    bool running = true;
+    int frameCount = 0;
+    int startTime = 0;
+    int fpsCount = 0;
+    int lockFPS = 0;
+    int count = 0;
+    int currentTime = 0;
+    int elapsedTime= 0;
+    int mouseX = 0;
+    int mouseY = 0;
     bool debugLogEnabled = false;
+    bool mouseEnabled = false;
+    bool lokedFPS = false;
+    bool paused = false;
+    bool running = true;
     AudioDevice mainTrack;
     AudioData touch;
     AudioData music;
@@ -21,33 +30,48 @@ private:
     Player playerOne;
     DebugLogger playerDebug;
     Fruit gameFruits;
+    std::string pauseFont = "assets/ttf/RampartOne-Regular.ttf";
+    std::string spritePlayerA = "assets/texture/playerA.png";
+    std::string spritePlayer = "assets/texture/player.png";
+    std::string lokedFrameRate = "";
     std::string muted = "";
-    std::string spritePlayer = "assets/image/player.png";
+    std::stringstream title;
+    TextTexture pauseAlert;
+    SDL_Event event;
 
 public:
     int gameLoop(SDL_Window *window, SDL_Renderer *renderer)
     {
-        std::cout << "Main game loop getted" << std::endl;
+        // Relativos ao som
         Mix_Chunk *sound = touch.load("assets/audio/audio2.wav");
         Mix_Chunk *sound2 = music.load("assets/audio/audio.wav");
         gameFruits.sound = touch.load("assets/audio/audio6.wav");
         gameFruits.sound2 = touch.load("assets/audio/audio7.wav");
         gameFruits.mainTrack = &mainTrack;
-        scene.loadBackgroud(renderer, "assets/texture/bitmap.png","assets/ttf/RampartOne-Regular.ttf");
-        playerOne.setSprite(renderer, spritePlayer);
+        // Relativos ao Delta Time
         startTime = SDL_GetTicks();
-        SDL_Event event;
         playerOne.tick = &elapsedTime;
-        gameFruits.init(renderer);
         gameFruits.tick = &elapsedTime;
         gameFruits.onePlayer = &playerOne;
+        // Relativos ao desenho de itens da interface
+        scene.loadBackgroud(renderer, "assets/texture/bitmap.png", "assets/ttf/CadetTest-Black.otf");
+        playerOne.loadSprite(renderer, spritePlayer, spritePlayerA);
+        playerOne.mouseEnabled = &mouseEnabled;
+        gameFruits.init(renderer);
         SDL_ShowWindow(window);
+        pauseAlert.load(pauseFont);
         while (running)
         {
+            title.str(""); // Reinicia o conteúdo como uma string vazia
+            title.clear();
+            title << "Fruit Rain SDL Edition Version 0.1 MinGW";
+            // Isso aqui corrige o tempo para o Delta time
             currentTime = SDL_GetTicks();
             elapsedTime = currentTime - startTime;
+            // Ações do jogo (Movimento, som, vida e etc...)
             while (SDL_PollEvent(&event))
             {
+                SDL_GetMouseState(&mouseX, &mouseY);
                 if (event.type == SDL_QUIT)
                 {
                     running = false;
@@ -88,6 +112,9 @@ public:
                         }
                         mainTrack.play(sound, -1);
                         break;
+                    case SDLK_p:
+                        paused = !paused;
+                        break;
                     case SDLK_F1:
                         std::cout << "\033[2J"; // Limpar o terminal
                         debugLogEnabled = !debugLogEnabled;
@@ -103,20 +130,86 @@ public:
                     case SDLK_F2:
                         fullScreen(window);
                         break;
+                    case SDLK_F3:
+                        mouseEnabled = !mouseEnabled;
+                        break;
+
+                    case SDLK_F4:
+                        lockFPS = 20;
+                        lokedFPS = !lokedFPS;
+                        lokedFrameRate = " (FPS Locked)";
+                        if (lokedFPS == false)
+                        {
+                            lockFPS = 0;
+                            lokedFrameRate = "";
+                        }
+                        break;
                     }
                 }
+                else if (event.type == SDL_KEYUP)
+                {
+                    switch (event.key.keysym.sym)
+                    {
+                    }
+                }
+                // Switch do mouse controler
+                if (mouseEnabled)
+                {
+                    playerOne.moveToMouse(mouseX, mouseY);
+                };
                 if (!mainTrack.isPlaying(0))
                 {
                     mainTrack.play(sound2, 0);
                 }
+                // Fluxo de Pause
+                while (paused)
+                {
+                    Mix_HaltChannel(-1);
+                    Mix_HaltChannel(0);
+                    pauseAlert.render(renderer, 250, 200, 64, 100, "Paused!");
+                    pauseAlert.lazyRender(renderer);
+                    SDL_RenderPresent(renderer);
+                    while (SDL_PollEvent(&event))
+                    {
+                        SDL_SetWindowTitle(window, "Fruit Rain SDL Edition Version 0.1 MinGW Paused");
+                        if (event.type == SDL_QUIT)
+                        {
+                            running = false;
+                            paused = false;
+                        }
+                        else if (event.type == SDL_KEYDOWN)
+                        {
+                            switch (event.key.keysym.sym)
+                            {
+                            case SDLK_p:
+                                paused = false;
+                                break;
+
+                            case SDLK_ESCAPE:
+                                playerOne.move(0, -speedMove);
+                                running = false;
+                                paused = false;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
-            SDL_RenderClear(renderer);
-            scene.draw(renderer);
+            // Redraw da janela
+            if (count > (int)(fpsCount / 30))
+            {
+                SDL_RenderClear(renderer);
+                scene.draw(renderer);
+                count = 0;
+            }
+            SDL_Delay(lockFPS);
             scene.scoreUpdate(renderer, gameFruits.update());
             playerOne.draw(renderer);
             SDL_RenderPresent(renderer);
             countFPS(window);
+            count++;
         }
+        // Ponto de descarga
         if (debugLogEnabled)
         {
             playerDebug.stop();
@@ -127,20 +220,22 @@ public:
         music.unload(sound2);
         return 0;
     };
+    // Contador de FPS
     void countFPS(SDL_Window *window)
     {
-        frameCount++;
         if (elapsedTime >= 1000)
         {
             float fps = frameCount / (elapsedTime / 1000.0f);
-            std::stringstream title;
-            title << "Fruit Rain SDL Edition FPS: " << fps << muted << std::endl;
+            fpsCount = frameCount;
+            title << muted << lokedFrameRate << " (FPS:" << fpsCount << ")" << std::endl;
             std::string windowTitle = title.str();
             SDL_SetWindowTitle(window, windowTitle.c_str());
             frameCount = 0;
             startTime = currentTime;
         }
+        frameCount++;
     };
+    // Tela inteira
     void fullScreen(SDL_Window *window)
     {
         Uint32 FullscreenFlag = SDL_WINDOW_FULLSCREEN;

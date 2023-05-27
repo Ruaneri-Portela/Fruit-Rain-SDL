@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "MainLoop.h"
-static void SetSDLIcon(SDL_Window *window)
+// Abaixo e o codigo que carrega o icone de janela
+static void setIcon(SDL_Window *window)
 {
 #include "Icon.c"
     Uint32 rmask, gmask, bmask, amask;
@@ -10,7 +11,7 @@ static void SetSDLIcon(SDL_Window *window)
     gmask = 0x00ff0000 >> shift;
     bmask = 0x0000ff00 >> shift;
     amask = 0x000000ff >> shift;
-#else // little endian, like x86
+#else // little endian, para CPUs x86
     rmask = 0x000000ff;
     gmask = 0x0000ff00;
     bmask = 0x00ff0000;
@@ -22,34 +23,21 @@ static void SetSDLIcon(SDL_Window *window)
     SDL_SetWindowIcon(window, icon);
     SDL_FreeSurface(icon);
 }
-
-#ifdef _WIN32 // Verifica se e windows para por o WINMAIN como entrypoint
+// Esse e o ponto de entrada, aqui estamos checando se e Windows, pois no Windows o ponto de entrada e WinMain
+#ifdef _WIN32
 int WinMain()
 #else
-int main()
+int Main()
 #endif
 {
-    std::cout << "Starting Game" << std::endl;
     gameWin game;
-    mainLoop masterBehaviour;
-    int returnReset = false;
-    if (!game.OpenGame())
+    MainLoop masterBehaviour;
+    if (!game.OpenGame(NULL)) //Verificando se os componentes iniciram com sucesso
     {
-        std::cout << "Windows system over SDL started" << std::endl;
-        SetSDLIcon(game.window);
+        setIcon(game.window);
+        game.OpenRender();
+        printf("Exit with code ->%d",masterBehaviour.gameLoop(game.window, game.renderer));
+        game.CloseGame();
     }
-    if (!game.OpenRender())
-    {
-        std::cout << "Acelerated rendering started" << std::endl;
-    }
-    if (!masterBehaviour.gameLoop(game.window, game.renderer))
-    {
-        std::cout << "Game loop drop" << std::endl;
-    }
-    if (!game.CloseGame())
-    {
-        std::cout << "End SDL successfully" << std::endl;
-    }
-    std::cout << "Exiting" << std::endl;
     return 0;
 }
