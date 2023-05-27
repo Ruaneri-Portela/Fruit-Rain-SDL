@@ -23,7 +23,7 @@ static void setIcon(SDL_Window *window)
     SDL_SetWindowIcon(window, icon);
     SDL_FreeSurface(icon);
 }
-// Esse e o ponto de entrada, aqui estamos cheando se e Windows, pois no Windows o ponto de entrada e WinMain
+// Esse e o ponto de entrada, aqui estamos checando se e Windows, pois no Windows o ponto de entrada e WinMain
 #ifdef _WIN32
 int WinMain()
 #else
