@@ -1,6 +1,5 @@
 #include "Game.h"
 #include "MainLoop.h"
-
 static void SetSDLIcon(SDL_Window *window)
 {
 #include "Icon.c"
@@ -27,7 +26,7 @@ static void SetSDLIcon(SDL_Window *window)
 #ifdef _WIN32 // Verifica se e windows para por o WINMAIN como entrypoint
 int WinMain()
 #else
-int Main()
+int main()
 #endif
 {
     std::cout << "Starting Game" << std::endl;
