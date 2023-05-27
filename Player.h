@@ -5,20 +5,28 @@
 class Player
 {
 public:
+    bool Atacker;
     int speedX = 0, speedY = 0;
-    int x = 500, y = 10;
+    int x = 500, y = 10,h=41,w=74;
     int health = 4;
     int *tick;
     bool *mouseEnabled;
     bool lock = true;
+    bool inverted = false;
+    bool atack = false;
     MoveDeltaTime MoveY;
     MoveDeltaTime MoveX;
-    SDL_Rect square = {x, y, 41, 74};
-    SDL_Surface *imageSurface;
+    SDL_Rect square = {x, y, h, w};
     SDL_Texture *texture;
-    void loadSprite(SDL_Renderer *renderer, std::string location)
+    SDL_Texture *texture2;
+    SDL_Texture *texture3;
+    SDL_Texture *texture4;
+    void loadSprite(SDL_Renderer *renderer, std::string location, std::string location2)
     {
         texture = setSprite(renderer, location.c_str());
+        texture2 = invertTexture(renderer, texture, true, location);
+        texture3 = setSprite(renderer, location2.c_str());
+        texture4 = invertTexture(renderer, texture, true, location2);
     };
     int draw(SDL_Renderer *renderer)
     {
@@ -41,11 +49,40 @@ public:
         square.x = x;
         square.y = y;
         moveOverSpeed();
-        SDL_RenderCopy(renderer, texture, NULL, &square);
+        if (atack)
+        {
+            if (inverted)
+            {
+                SDL_RenderCopy(renderer, texture4, NULL, &square);
+            }
+            else
+            {
+                SDL_RenderCopy(renderer, texture3, NULL, &square);
+            }
+        }
+        else
+        {
+            if (inverted)
+            {
+                SDL_RenderCopy(renderer, texture2, NULL, &square);
+            }
+            else
+            {
+                SDL_RenderCopy(renderer, texture, NULL, &square);
+            };
+        };
         return 0;
     };
     void move(int addX, int addY)
     {
+        if (addX > 0)
+        {
+            inverted = true;
+        }
+        else if (addX < 0)
+        {
+            inverted = false;
+        }
         x = x + addX;
         y = y + addY;
     }
@@ -87,5 +124,5 @@ public:
         float fractionDistance = (float)distance / max_distance;
         float speed = log(1 + abs(fractionDistance)) * max_speed;
         return round(speed);
-    }
+    };
 };

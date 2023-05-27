@@ -30,6 +30,7 @@ private:
     std::string muted = "";
     std::string lokedFrameRate = "";
     std::string spritePlayer = "assets/texture/player.png";
+    std::string spritePlayerA = "assets/texture/playerA.png";
     std::stringstream title;
 
 public:
@@ -48,7 +49,7 @@ public:
         gameFruits.onePlayer = &playerOne;
         // Relativos ao desenho de itens da interface
         scene.loadBackgroud(renderer, "assets/texture/bitmap.png", "assets/ttf/CadetTest-Black.otf");
-        playerOne.loadSprite(renderer, spritePlayer);
+        playerOne.loadSprite(renderer, spritePlayer,spritePlayerA);
         playerOne.mouseEnabled = &mouseEnabled;
         playerOne.speedY = 20;
         gameFruits.init(renderer);
