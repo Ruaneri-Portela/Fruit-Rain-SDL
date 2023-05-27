@@ -8,8 +8,7 @@ This game is a remake of the game I produced in python some time ago (Original V
 As language chosen was C++ in special the version made available by the MSYS2 project (Windows GNU tools -> https://www.msys2.org/), because I have some experience with C/C++/C# family languages even in a primitive way.
 
 SDL was chosen for being a lightweight library that forces the programmer to implement basic concepts like collision systems, sound manipulation and theards, things that I have been working hard on building this game.
-<video width="320" height="240" controls>
-  <source src="midia/game.mp4" type="video/mp4">
-  Seu navegador não suporta a reprodução de vídeos.
-</video>
+
+![Gameplay](midia/game.gif)
+
 
