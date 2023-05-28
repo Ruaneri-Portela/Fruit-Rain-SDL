@@ -9,11 +9,12 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\src\\${fileBasenameNoExtension}.exe",
+                "${fileDirname}\\build\\${fileBasenameNoExtension}.exe",
+                "-lSDL2main",
                 "-lSDL2",
+                "-lSDL2_ttf",
                 "-lSDL2_mixer",
-                "-lSDL2_image",
-                "-lSDL2_ttf"
+                "-lSDL2_image"
             ],
             "options": {
                 "cwd": "${fileDirname}"

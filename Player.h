@@ -1,4 +1,8 @@
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 #include <string>
 #include "Utils.h"
 // Instanciamento do objeto jogavel
@@ -29,7 +33,7 @@ public:
     };
     int draw(SDL_Renderer *renderer)
     {
-        if (y > 450 & lock)
+        if (y > 450 && lock)
         {
             speedY = 0;
             y = 450;
@@ -51,8 +55,8 @@ public:
         {
             x = 0;
         };
-        MoveY.speed = speedY;
-        MoveX.speed = speedX;
+        MoveY.speed = (float)speedY;
+        MoveX.speed = (float)speedX;
         square.x = x;
         square.y = y;
         moveOverSpeed();
@@ -130,6 +134,6 @@ public:
     {
         float fractionDistance = (float)distance / max_distance;
         float speed = log(1 + abs(fractionDistance)) * max_speed;
-        return round(speed);
+        return (int)round(speed);
     };
 };

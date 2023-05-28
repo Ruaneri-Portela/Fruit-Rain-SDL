@@ -1,5 +1,8 @@
-#define UNICODE
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 #include <windows.h>
 #include "Game.h"
 #include "MainLoop.h"
@@ -8,9 +11,10 @@ HWND button;
 // Isso abaixo e como se posse uma thead separada os itens em WindowProc rodam independente o WinMain
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    
     SDL_Window *sdlWindow;
     gameWin game;
-    mainLoop masterBehaviour;
+    MainLoop masterBehaviour;
     std::string alert;
     int status;
     switch (uMsg)

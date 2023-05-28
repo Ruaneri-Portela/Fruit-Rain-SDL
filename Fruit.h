@@ -40,8 +40,8 @@ public:
             }
             else if (distance(onePlayer->x, onePlayer->y, entity->x, entity->y) < *diff)
             {
-                onePlayer->square.h=74;
-                onePlayer->square.w =50;
+                onePlayer->square.h = 74;
+                onePlayer->square.w = 50;
                 onePlayer->atack = true;
                 mainTrack->play(sound, -1);
                 elapsed.speed = 1;
@@ -53,8 +53,8 @@ public:
             {
                 if (elapsed.move() != 0)
                 {
-                    onePlayer->square.h=74;
-                    onePlayer->square.w =41;
+                    onePlayer->square.h = 74;
+                    onePlayer->square.w = 41;
                     onePlayer->atack = false;
                 }
             }
@@ -108,7 +108,7 @@ public:
     {
         returnState = 0;
         Node *current = head;
-        while (current != nullptr)
+        while (current != nullptr && triggered)
         {
             current->data->object(&triggered, renderer, mainTrack, sound, sound2, &returnState, onePlayer, &diff);
             current = current->next;
@@ -122,7 +122,7 @@ public:
     void destroy()
     {
         triggered = false;
-        delete sound;
-        delete sound2;
+        Mix_FreeChunk(sound);
+        Mix_FreeChunk(sound2);
     };
 };

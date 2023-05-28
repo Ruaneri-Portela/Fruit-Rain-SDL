@@ -25,18 +25,22 @@ static void setIcon(SDL_Window *window)
 }
 // Esse e o ponto de entrada, aqui estamos checando se e Windows, pois no Windows o ponto de entrada e WinMain
 #ifdef _WIN32
-int WinMain()
+#ifdef _MSC_VER
+int SDL_main(int argc, char *argv[]) // Para o Visual Studio via Microsoft Visual C++ Compiler
 #else
-int Main()
+int WinMain(int argc, char *argv[]) // Para o ambiente de compilação MinGw/MSYS2
+#endif
+#else
+int main(int argc, char *argv[]) // Unix-like (Linux, BSDs e MacOS)
 #endif
 {
     gameWin game;
     MainLoop masterBehaviour;
-    if (!game.OpenGame(NULL)) //Verificando se os componentes iniciram com sucesso
+    if (!game.OpenGame(NULL)) // Verificando se os componentes iniciram com sucesso
     {
         setIcon(game.window);
         game.OpenRender();
-        printf("Exit with code ->%d",masterBehaviour.gameLoop(game.window, game.renderer));
+        printf("Exit with code ->%d", masterBehaviour.gameLoop(game.window, game.renderer));
         game.CloseGame();
     }
     return 0;

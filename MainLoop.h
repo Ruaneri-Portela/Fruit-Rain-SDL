@@ -15,7 +15,7 @@ private:
     int lockFPS = 0;
     int count = 0;
     int currentTime = 0;
-    int elapsedTime= 0;
+    int elapsedTime = 0;
     int mouseX = 0;
     int mouseY = 0;
     bool debugLogEnabled = false;
@@ -40,6 +40,129 @@ private:
     SDL_Event event;
 
 public:
+    void GameControler(Mix_Chunk *sound, SDL_Window *window, Mix_Chunk *sound2, SDL_Renderer *renderer)
+    {
+        while (SDL_PollEvent(&event))
+        {
+            SDL_GetMouseState(&mouseX, &mouseY);
+            if (event.type == SDL_QUIT)
+            {
+                running = false;
+            }
+            else if (event.type == SDL_KEYDOWN)
+            {
+                switch (event.key.keysym.sym)
+                {
+                case SDLK_w:
+                    playerOne.move(0, -speedMove);
+                    mainTrack.play(sound, -1);
+                    break;
+                case SDLK_a:
+                    playerOne.move(-speedMove, 0);
+                    mainTrack.play(sound, -1);
+                    break;
+                case SDLK_s:
+                    playerOne.move(0, speedMove);
+                    mainTrack.play(sound, -1);
+                    break;
+                case SDLK_d:
+                    playerOne.move(speedMove, 0);
+                    mainTrack.play(sound, -1);
+                    break;
+                case SDLK_ESCAPE:
+                    running = false;
+                    break;
+                case SDLK_m:
+                    mainTrack.playable = !mainTrack.playable;
+                    if (mainTrack.playable)
+                    {
+                        muted = "";
+                    }
+                    else
+                    {
+                        Mix_HaltChannel(-1);
+                        muted = " (Sem Som)";
+                    }
+                    mainTrack.play(sound, -1);
+                    break;
+                case SDLK_p:
+                    paused = !paused;
+                    break;
+                case SDLK_F1:
+                    std::cout << "\033[2J"; // Limpar o terminal
+                    debugLogEnabled = !debugLogEnabled;
+                    if (debugLogEnabled)
+                    {
+                        playerDebug.start(&playerOne);
+                    }
+                    else
+                    {
+                        playerDebug.stop();
+                    }
+                    break;
+                case SDLK_F2:
+                    fullScreen(window);
+                    break;
+                case SDLK_F3:
+                    mouseEnabled = !mouseEnabled;
+                    break;
+
+                case SDLK_F4:
+                    lockFPS = 20;
+                    lokedFPS = !lokedFPS;
+                    lokedFrameRate = " (FPS Locked)";
+                    if (lokedFPS == false)
+                    {
+                        lockFPS = 0;
+                        lokedFrameRate = "";
+                    }
+                    break;
+                }
+            }
+            // Switch do mouse controler
+            if (mouseEnabled)
+            {
+                playerOne.moveToMouse(mouseX, mouseY);
+            };
+            if (!mainTrack.isPlaying(0))
+            {
+                mainTrack.play(sound2, 0);
+            }
+            // Fluxo de Pause
+            while (paused)
+            {
+                Mix_HaltChannel(-1);
+                Mix_HaltChannel(0);
+                pauseAlert.render(renderer, 250, 200, 64, 100, "Paused!");
+                pauseAlert.lazyRender(renderer);
+                SDL_RenderPresent(renderer);
+                while (SDL_PollEvent(&event))
+                {
+                    SDL_SetWindowTitle(window, "Fruit Rain SDL Edition Version 0.1 MinGW Paused");
+                    if (event.type == SDL_QUIT)
+                    {
+                        running = false;
+                        paused = false;
+                    }
+                    else if (event.type == SDL_KEYDOWN)
+                    {
+                        switch (event.key.keysym.sym)
+                        {
+                        case SDLK_p:
+                            paused = false;
+                            break;
+
+                        case SDLK_ESCAPE:
+                            playerOne.move(0, -speedMove);
+                            running = false;
+                            paused = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
     int gameLoop(SDL_Window *window, SDL_Renderer *renderer)
     {
         // Relativos ao som
@@ -64,137 +187,17 @@ public:
         {
             title.str(""); // Reinicia o conteúdo como uma string vazia
             title.clear();
-            title << "Fruit Rain SDL Edition Version 0.1 MinGW";
+            title << "Fruit Rain SDL Edition Version 0.1";
+#ifdef _MSC_VER
+            title << " (MSVC)";
+#else
+            title << " (G++ or MinGw for Windows)";
+#endif
             // Isso aqui corrige o tempo para o Delta time
             currentTime = SDL_GetTicks();
             elapsedTime = currentTime - startTime;
             // Ações do jogo (Movimento, som, vida e etc...)
-            while (SDL_PollEvent(&event))
-            {
-                SDL_GetMouseState(&mouseX, &mouseY);
-                if (event.type == SDL_QUIT)
-                {
-                    running = false;
-                }
-                else if (event.type == SDL_KEYDOWN)
-                {
-                    switch (event.key.keysym.sym)
-                    {
-                    case SDLK_w:
-                        playerOne.move(0, -speedMove);
-                        mainTrack.play(sound, -1);
-                        break;
-                    case SDLK_a:
-                        playerOne.move(-speedMove, 0);
-                        mainTrack.play(sound, -1);
-                        break;
-                    case SDLK_s:
-                        playerOne.move(0, speedMove);
-                        mainTrack.play(sound, -1);
-                        break;
-                    case SDLK_d:
-                        playerOne.move(speedMove, 0);
-                        mainTrack.play(sound, -1);
-                        break;
-                    case SDLK_ESCAPE:
-                        running = false;
-                        break;
-                    case SDLK_m:
-                        mainTrack.playable = !mainTrack.playable;
-                        if (mainTrack.playable)
-                        {
-                            muted = "";
-                        }
-                        else
-                        {
-                            Mix_HaltChannel(-1);
-                            muted = " (Sem Som)";
-                        }
-                        mainTrack.play(sound, -1);
-                        break;
-                    case SDLK_p:
-                        paused = !paused;
-                        break;
-                    case SDLK_F1:
-                        std::cout << "\033[2J"; // Limpar o terminal
-                        debugLogEnabled = !debugLogEnabled;
-                        if (debugLogEnabled)
-                        {
-                            playerDebug.start(&playerOne);
-                        }
-                        else
-                        {
-                            playerDebug.stop();
-                        }
-                        break;
-                    case SDLK_F2:
-                        fullScreen(window);
-                        break;
-                    case SDLK_F3:
-                        mouseEnabled = !mouseEnabled;
-                        break;
-
-                    case SDLK_F4:
-                        lockFPS = 20;
-                        lokedFPS = !lokedFPS;
-                        lokedFrameRate = " (FPS Locked)";
-                        if (lokedFPS == false)
-                        {
-                            lockFPS = 0;
-                            lokedFrameRate = "";
-                        }
-                        break;
-                    }
-                }
-                else if (event.type == SDL_KEYUP)
-                {
-                    switch (event.key.keysym.sym)
-                    {
-                    }
-                }
-                // Switch do mouse controler
-                if (mouseEnabled)
-                {
-                    playerOne.moveToMouse(mouseX, mouseY);
-                };
-                if (!mainTrack.isPlaying(0))
-                {
-                    mainTrack.play(sound2, 0);
-                }
-                // Fluxo de Pause
-                while (paused)
-                {
-                    Mix_HaltChannel(-1);
-                    Mix_HaltChannel(0);
-                    pauseAlert.render(renderer, 250, 200, 64, 100, "Paused!");
-                    pauseAlert.lazyRender(renderer);
-                    SDL_RenderPresent(renderer);
-                    while (SDL_PollEvent(&event))
-                    {
-                        SDL_SetWindowTitle(window, "Fruit Rain SDL Edition Version 0.1 MinGW Paused");
-                        if (event.type == SDL_QUIT)
-                        {
-                            running = false;
-                            paused = false;
-                        }
-                        else if (event.type == SDL_KEYDOWN)
-                        {
-                            switch (event.key.keysym.sym)
-                            {
-                            case SDLK_p:
-                                paused = false;
-                                break;
-
-                            case SDLK_ESCAPE:
-                                playerOne.move(0, -speedMove);
-                                running = false;
-                                paused = false;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+            GameControler(sound, window, sound2, renderer);
             // Redraw da janela
             if (count > (int)(fpsCount / 30))
             {

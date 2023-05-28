@@ -1,4 +1,4 @@
-PATHFILEC = src/FruitRainSDLEdition
+PATHFILEC = build/FruitRain
 ifeq ($(OS),Windows_NT)
     EXECUTABLE = $(PATHFILEC).exe
 	
@@ -8,7 +8,7 @@ endif
 all:
 	make compile
 compile:
-	g++ Main.cpp -o $(EXECUTABLE) -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image
+	g++ FruitRain.cpp -o $(EXECUTABLE) -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image
 
 compileWin:
 	g++ Windows.cpp -o $(EXECUTABLE) -static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic -lSDL2main -lSDL2 -lSDL2_ttf

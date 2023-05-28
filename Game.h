@@ -1,6 +1,12 @@
-#include <SDL2/SDL.h>
+#ifdef _MSC_VER
+#include <SDL_ttf.h>
+#include <SDL_mixer.h>
+#include <SDL.h>
+#else
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL.h>
+#endif
 // Carregador do jogo, inicia e destroi itens do SDL
 class gameWin
 {

@@ -1,4 +1,8 @@
+#ifdef _MSC_VER
+#include <SDL_ttf.h>
+#else
 #include <SDL2/SDL_ttf.h>
+#endif
 #include <string>
 // Carregador de textos na tela
 class TextTexture
@@ -20,7 +24,7 @@ public:
         SDL_FreeSurface(textSurface);
         destRect.x = x;
         destRect.y = y;
-        destRect.w = w*strlen(text);
+        destRect.w = w*(int)strlen(text);
         destRect.h = h;
     }
     void lazyRender(SDL_Renderer *renderer)
