@@ -119,21 +119,21 @@ public:
         {
             newX = logMoviment(xDiff, 10, -5);
         }
-        /*
+        
         if (yDiff < 0)
         {
-            newY = logMoviment(yDiff, 10, 5);
+            newY = logMoviment(yDiff, 0, 0);
         }
         else
         {
-            newY = logMoviment(yDiff, 10, -5);
-        }*/
+            newY = logMoviment(yDiff, 0, 0);
+        }
         move(newX, newY);
     }
     int logMoviment(int distance, int max_distance, int max_speed)
     {
-        float fractionDistance = (float)distance / max_distance;
-        float speed = log(1 + abs(fractionDistance)) * max_speed;
+        float fractionDistance = (float)distance / (float)max_distance;
+        float speed = log(1 + abs(fractionDistance)) * (float)max_speed;
         return (int)round(speed);
     };
 };

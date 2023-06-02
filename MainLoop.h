@@ -8,6 +8,7 @@ class MainLoop
 {
 private:
     // Variaveis do jogo
+    int resetStatus = 0;
     int speedMove = 20;
     int frameCount = 0;
     int startTime = 0;
@@ -18,11 +19,13 @@ private:
     int elapsedTime = 0;
     int mouseX = 0;
     int mouseY = 0;
+    float fallSpeed = 10;
     bool debugLogEnabled = false;
     bool mouseEnabled = false;
     bool lokedFPS = false;
     bool paused = false;
     bool running = true;
+    bool gameover = false;
     AudioDevice mainTrack;
     AudioData touch;
     AudioData music;
@@ -40,7 +43,7 @@ private:
     SDL_Event event;
 
 public:
-    void GameControler(Mix_Chunk *sound, SDL_Window *window, Mix_Chunk *sound2, SDL_Renderer *renderer)
+    void GameControler(Mix_Chunk *sound, SDL_Window *window, Mix_Chunk *sound2, SDL_Renderer *renderer, Mix_Chunk* sound3)
     {
         while (SDL_PollEvent(&event))
         {
@@ -117,13 +120,18 @@ public:
                         lokedFrameRate = "";
                     }
                     break;
+
+                case SDLK_F5:
+                    resetStatus = 1;
+                    running = false;
+                    break;
                 }
-            }
+            };
             // Switch do mouse controler
             if (mouseEnabled)
             {
                 playerOne.moveToMouse(mouseX, mouseY);
-            };
+            }
             if (!mainTrack.isPlaying(0))
             {
                 mainTrack.play(sound2, 0);
@@ -136,27 +144,64 @@ public:
                 pauseAlert.render(renderer, 250, 200, 64, 100, "Paused!");
                 pauseAlert.lazyRender(renderer);
                 SDL_RenderPresent(renderer);
-                while (SDL_PollEvent(&event))
-                {
-                    SDL_SetWindowTitle(window, "Fruit Rain SDL Edition Version 0.1 MinGW Paused");
-                    if (event.type == SDL_QUIT)
+                while (paused) {
+                    while (SDL_PollEvent(&event))
                     {
-                        running = false;
-                        paused = false;
-                    }
-                    else if (event.type == SDL_KEYDOWN)
-                    {
-                        switch (event.key.keysym.sym)
+                        SDL_SetWindowTitle(window, "Paused");
+                        if (event.type == SDL_QUIT)
                         {
-                        case SDLK_p:
-                            paused = false;
-                            break;
-
-                        case SDLK_ESCAPE:
-                            playerOne.move(0, -speedMove);
                             running = false;
                             paused = false;
-                            break;
+                        }
+                        else if (event.type == SDL_KEYDOWN)
+                        {
+                            switch (event.key.keysym.sym)
+                            {
+                            case SDLK_p:
+                                paused = false;
+                                break;
+
+                            case SDLK_ESCAPE:
+                                playerOne.move(0, -speedMove);
+                                running = false;
+                                paused = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+            };
+            while (gameover) {
+                Mix_HaltChannel(-1);
+                Mix_HaltChannel(0);
+                mainTrack.play(sound3, -1);
+                pauseAlert.render(renderer, 200, 200, 64, 100, "Game Over!");
+                pauseAlert.lazyRender(renderer);
+                SDL_RenderPresent(renderer);
+                while (gameover){
+                    while (SDL_PollEvent(&event))
+                    {
+                        SDL_SetWindowTitle(window, "Game Over");
+                        if (event.type == SDL_QUIT)
+                        {
+                            running = false;
+                            gameover = false;
+                        }
+                        else if (event.type == SDL_KEYDOWN)
+                        {
+                            switch (event.key.keysym.sym)
+                            {
+                            case SDLK_F5:
+                                resetStatus = 1;
+                                running = false;
+                                gameover = false;
+                                break;
+                            case SDLK_ESCAPE:
+                                running = false;
+                                gameover = false;
+                                break;
+                            }
                         }
                     }
                 }
@@ -168,6 +213,7 @@ public:
         // Relativos ao som
         Mix_Chunk *sound = touch.load("assets/audio/audio2.wav");
         Mix_Chunk *sound2 = music.load("assets/audio/audio.wav");
+        Mix_Chunk* sound3 = music.load("assets/audio/audio5.wav");
         gameFruits.sound = touch.load("assets/audio/audio6.wav");
         gameFruits.sound2 = touch.load("assets/audio/audio7.wav");
         gameFruits.mainTrack = &mainTrack;
@@ -197,7 +243,10 @@ public:
             currentTime = SDL_GetTicks();
             elapsedTime = currentTime - startTime;
             // Ações do jogo (Movimento, som, vida e etc...)
-            GameControler(sound, window, sound2, renderer);
+            GameControler(sound, window, sound2, renderer, sound3);
+            if (playerOne.health < 0) {
+                gameover = true;
+            }
             // Redraw da janela
             if (count > (int)(fpsCount / 30))
             {
@@ -206,7 +255,7 @@ public:
                 count = 0;
             }
             SDL_Delay(lockFPS);
-            scene.scoreUpdate(renderer, gameFruits.update());
+            scene.scoreUpdate(renderer, gameFruits.update(&fallSpeed));
             playerOne.draw(renderer);
             SDL_RenderPresent(renderer);
             countFPS(window);
@@ -221,14 +270,13 @@ public:
         scene.destroy();
         touch.unload(sound);
         music.unload(sound2);
-        return 0;
+        return resetStatus;
     };
     // Contador de FPS
     void countFPS(SDL_Window *window)
     {
         if (elapsedTime >= 1000)
         {
-            float fps = frameCount / (elapsedTime / 1000.0f);
             fpsCount = frameCount;
             title << muted << lokedFrameRate << " (FPS:" << fpsCount << ")" << std::endl;
             std::string windowTitle = title.str();

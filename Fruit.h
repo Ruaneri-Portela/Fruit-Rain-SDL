@@ -6,7 +6,7 @@ public:
     MoveDeltaTime elapsed;
     Entity *entity = NULL;
     SDL_Texture *sprite;
-    void object(bool *triggered, SDL_Renderer *renderer, AudioDevice *mainTrack, Mix_Chunk *sound, Mix_Chunk *sound2, int *returnState, Player *onePlayer, float *diff)
+    void object(bool *triggered, SDL_Renderer *renderer, AudioDevice *mainTrack, Mix_Chunk *sound, Mix_Chunk *sound2, int *returnState, Player *onePlayer, float *diff,float * speed)
     {
         if (triggered)
         {
@@ -29,11 +29,12 @@ public:
                     sprite = setSprite(renderer, "assets/texture/fruit3.png");
                     break;
                 }
-                entity->speedAdd(0, 10);
+                entity->speedAdd(0, *speed);
             };
             if (entity->y > 510)
             {
                 mainTrack->play(sound2, -1);
+                onePlayer->health = onePlayer->health - 1;
                 *returnState = 2;
                 delete entity;
                 entity = NULL;
@@ -46,6 +47,7 @@ public:
                 mainTrack->play(sound, -1);
                 elapsed.speed = 1;
                 *returnState = 1;
+                *speed = *speed * 1.01f;
                 delete entity;
                 entity = NULL;
             };
@@ -104,13 +106,13 @@ public:
         objManager = new MoveDeltaTime();
         objManager->speed = 0.2f;
     };
-    int update()
+    int update(float * speed)
     {
         returnState = 0;
         Node *current = head;
         while (current != nullptr && triggered)
         {
-            current->data->object(&triggered, renderer, mainTrack, sound, sound2, &returnState, onePlayer, &diff);
+            current->data->object(&triggered, renderer, mainTrack, sound, sound2, &returnState, onePlayer, &diff,speed);
             current = current->next;
         }
         if (objManager->move() >= 1)

@@ -23,9 +23,9 @@ SDL_Texture *setSprite(SDL_Renderer *renderer, std::string location)
 class MoveDeltaTime
 {
 private:
-    Uint32 startTime = SDL_GetTicks();
-    Uint32 currentTime;
-    Uint32 elapsedTime;
+    int startTime = SDL_GetTicks();
+    int currentTime;
+    int elapsedTime;
 
     int callback;
 
@@ -39,7 +39,7 @@ public:
         {
             elapsedTime = currentTime - startTime;
             divSpeed = 1000 / abs(speed);
-            if (elapsedTime >= divSpeed)
+            if (elapsedTime >= (int)divSpeed)
             {
                 if (mov >= 1)
                 {

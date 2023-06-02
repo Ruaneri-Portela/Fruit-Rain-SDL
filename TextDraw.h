@@ -9,7 +9,7 @@ class TextTexture
 {
 public:
     TTF_Font *font;
-    SDL_Color color = {0, 0, 0};
+    SDL_Color color = {0, 0, 0,0};
     SDL_Surface *textSurface;
     SDL_Texture *textTexture;
     SDL_Rect destRect;
